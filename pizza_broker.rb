@@ -11,6 +11,12 @@ $stderr.sync = true
     @orders = {}
     @logger = Logger.new(STDOUT)
     @logger.level = Logger::INFO
+    @toppings_map = {"pepperoni"=> :E2350,
+                     "sausage"=> :E2351,
+                     "feta"=> :E2344,
+                     "pesto"=> :E2333,
+                     "olives"=> :E2369,
+                     "peppers"=> :E2368 }
   end
 
   get "/v2/catalog" do
@@ -21,16 +27,25 @@ $stderr.sync = true
 
   put "/v2/service_instances/:id" do |id|
     content_type :json
-
     if params['accepts_incomplete'] && ENV["DELIVERY_BEARER"]
-      @orders[id] = 'Order placed'
+      request.body.rewind
+      body = JSON.parse(request.body.read)
+      toppings = body["parameters"]["toppings"]
+      # { Pepperoni : 1 }params['accepts_incomplete'] && ENV["DELIVERY_BEARER"]orders[id] = 'Order placed'
+
+      selected_toppings = {}
+      toppings.each do |topping|
+        selected_toppings.add(@toppings_map[topping], 1)
+      end
+
       @logger.info("********* Order received: #{id} ********")
 
-      response_code = add_pizza_to_cart
+      response_code = add_pizza_to_cart_with_toppings(selected_toppings)
       if response_code == 200
         response_code = pay_for_pizza
         if response_code == 200
           @logger.info("********* Order paid ********")
+          @orders[id] = 'Order placed'
           status 202
         else
           @logger.info("********* Payment failed ********")
@@ -53,7 +68,7 @@ $stderr.sync = true
     {description: @orders[id], state: 'succeeded'}.to_json
   end
 
-  def add_pizza_to_cart
+  def add_pizza_to_cart_with_toppings(selected_toppings)
    cart_url = "https://api.delivery.com/customer/cart/3022"
    params = {
      order_type: "delivery",
@@ -66,7 +81,7 @@ $stderr.sync = true
          E2331: 1,
          E2636: 1,
          E2637: 1
-       }
+       }.merge(selected_toppings)
      }
    }
    @logger.info("********* Placing order ********")
