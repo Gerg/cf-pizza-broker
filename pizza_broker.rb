@@ -82,6 +82,11 @@ $stderr.sync = true
     end
   end
 
+  delete "/v2/service_instances/:id" do
+    content_type :json
+    {}
+  end
+
   def add_pizza_to_cart_with_toppings(selected_toppings)
    cart_url = "https://api.delivery.com/customer/cart/3022"
    params = {
