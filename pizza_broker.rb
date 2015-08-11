@@ -31,7 +31,8 @@ $stderr.sync = true
       request.body.rewind
       body = JSON.parse(request.body.read)
       toppings = body["parameters"]["toppings"]
-      # { Pepperoni : 1 }params['accepts_incomplete'] && ENV["DELIVERY_BEARER"]orders[id] = 'Order placed'
+
+      do_checkout = body["parameters"]["checkout"]
 
       selected_toppings = {}
       toppings.each do |topping|
@@ -41,7 +42,7 @@ $stderr.sync = true
       @logger.info("********* Order received: #{id} ********")
 
       response_code = add_pizza_to_cart_with_toppings(selected_toppings)
-      if response_code == 200
+      if response_code == 200 && do_checkout
         response_code = pay_for_pizza
         if response_code == 200
           @logger.info("********* Order paid ********")
