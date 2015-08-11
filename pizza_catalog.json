@@ -1,0 +1,38 @@
+{
+  "services": [
+    {
+      "name": "pivotal-pizza",
+      "id": "9a434529-1572-4ae2-bbcb-558ff2d82873",
+      "description": "Order a delicious pizza",
+      "tags": [
+        "pizza",
+        "food",
+        "gluten-free",
+        "cheese"
+      ],
+      "bindable": false,
+      "metadata": {
+        "provider": {
+          "name": "Pizza Team"
+        },
+        "listing": {
+          "imageUrl": "https://secure.static.tumblr.com/a41e4cc093d6bd7eea9405d0d554612a/xx2bnxs/2BZngogwe/tumblr_static_525gdiu9qccgwc44cgowk88so_640_v2.jpg",
+          "blurb": "Provision elastic pizzas",
+          "longDescription": "Pizza delivered from the cloud to you"
+        },
+        "displayName": "Pizza Broker"
+      },
+      "plan_updateable": false,
+      "plans": [
+        {
+          "name": "cheese",
+          "id": "d1b1527f-4641-4adb-a12f-c757b2dd7924",
+          "description": "Simple but classic",
+          "metadata": {
+            "cost": 10
+          }
+        }
+      ]
+    }
+  ]
+}
