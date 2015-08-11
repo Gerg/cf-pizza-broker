@@ -1,3 +1,4 @@
 {
-  "toppings": ["pepperoni", "sausage", "feta", "pesto", "olives", "peppers"]
+  "toppings": ["pepperoni", "sausage", "feta", "pesto", "olives", "peppers"],
+  "checkout": false
 }
