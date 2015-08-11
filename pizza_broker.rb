@@ -11,12 +11,12 @@ $stderr.sync = true
     @orders = {}
     @logger = Logger.new(STDOUT)
     @logger.level = Logger::INFO
-    @toppings_map = {"pepperoni"=> :E2350,
-                     "sausage"=> :E2351,
-                     "feta"=> :E2344,
-                     "pesto"=> :E2333,
-                     "olives"=> :E2369,
-                     "peppers"=> :E2368 }
+    @toppings_map = {"pepperoni"=> :E2472,
+                     "sausage"=> :E2473,
+                     "feta"=> :E2466,
+                     "pesto"=> :E2456,
+                     "olives"=> :E2491,
+                     "peppers"=> :E2490 }
   end
 
   get "/v2/catalog" do
@@ -96,8 +96,8 @@ $stderr.sync = true
        item_qty: 1,
        option_qty: {
          E2329: 1,
-         E2330: 1,
-         E2331: 1,
+         E2453: 1,
+         E2454: 1,
          E2636: 1,
          E2637: 1
        }.merge(selected_toppings)
