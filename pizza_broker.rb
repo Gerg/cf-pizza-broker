@@ -36,7 +36,7 @@ $stderr.sync = true
 
       selected_toppings = {}
       toppings.each do |topping|
-        selected_toppings.add(@toppings_map[topping], 1)
+        selected_toppings[@toppings_map[topping]] = 1
       end
 
       @logger.info("********* Order received: #{id} ********")
