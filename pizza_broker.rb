@@ -66,7 +66,20 @@ $stderr.sync = true
   get "/v2/service_instances/:id/last_operation" do |id|
     content_type :json
     @logger.info("******** Poll received for: #{id} ***********")
-    {description: @orders[id], state: 'succeeded'}.to_json
+
+    response = check_recent_order_status
+
+    if response.code == 200
+      order = JSON.parse(response.body)['orders'].first
+      if order['confirmed']
+        {description: 'Order confirmed', state: 'succeeded'}.to_json
+      else
+        {description: @orders[id], state: 'in progress'}.to_json
+      end
+    else
+      status 404
+      {description: 'Order not found', state: 'failed'}.to_json
+    end
   end
 
   def add_pizza_to_cart_with_toppings(selected_toppings)
@@ -95,6 +108,8 @@ $stderr.sync = true
        :"Content-type" => "application/json"
      })
 
+   @logger.info("Response: #{resp.inspect}")
+
     resp.code
   end
 
@@ -103,16 +118,17 @@ $stderr.sync = true
     params = {
       tip: 3.00,
       location_id: 2618175,
-      payments: [
-        {
+      payments: {
+        :'0' => {
           type: 'credit_card',
-          id: 4199129
+          id: '4199129'
         }
-      ],
+      },
       order_type: 'delivery',
       instructions: 'Call 774-270-4127 when you arrive at address'
     }
 
+    begin
     response = RestClient::Request.execute(method: :post,
       url: checkout_url,
       payload: params,
@@ -122,6 +138,26 @@ $stderr.sync = true
       }
     )
 
+    @logger.info("Response: #{response.inspect}")
+
+    rescue Exception => e
+    @logger.info("Response: #{e.response.inspect}")
+    end
+
     response.code
- end
+  end
+
+  def check_recent_order_status
+    order_status_url = "https://api.delivery.com/customer/orders/recent"
+    response = RestClient::Request.execute(method: :get,
+      url: order_status_url,
+      payload: {},
+      headers:{
+        :"Authorization" => "Bearer " + ENV["DELIVERY_BEARER"],
+        :"Content-type" => "application/json"
+      }
+    )
+
+    return response
+  end
 end
